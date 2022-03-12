@@ -1,1 +1,14 @@
 drools-rule-engine
+
+This a sample drools project in Spring Boot.
+
+#Eclipse Drools Plugin
+https://download.jboss.org/drools/release/7.46.0.Final/org.drools.updatesite	
+
+#Kmodule
+<?xml version="1.0" encoding="UTF-8"?>
+<kmodule xmlns="http://jboss.org/kie/6.0.0/kmodule">
+	<kbase name="kbase" packages="rules">
+		<ksession name="kiesession" />
+	</kbase>
+</kmodule>
