@@ -21,20 +21,23 @@ public class RuleService {
 	@Value("${rules.repo.url}")
 	private String rulesRepoUrl;
 
-	@Value("${rules.upload.base.url}")
+	@Value("${rules.clone.base.url}")
 	private String rulesUploadPath;
 
 	public File createDirectory() throws IOException {
 		Path directory = Files.createDirectories(Paths.get(rulesUploadPath));
 		return directory.toFile();
 	}
-
+	
 	public void cloneRepositry() {
 
+		logger.info("Entering Clone Repositry Method");
+
 		try {
-			
+
 			Git.cloneRepository().setURI(rulesRepoUrl).setDirectory(createDirectory()).call();
-			
+			logger.info("Cloning Repositry Sucessful");
+
 		} catch (GitAPIException | IOException e) {
 
 			logger.error("Error occured during cloning remote reposistory : {}", e.getMessage());
