@@ -17,10 +17,10 @@ import com.example.drools.rule.engine.validation.RequestValidator;
 public class RuleEngineController {
 
 	@Autowired
-	RulesDelegate delegate;
+	private RulesDelegate delegate;
 
 	@Autowired
-	RequestValidator validator;
+	private RequestValidator validator;
 
 	@PostMapping(value = "/execute", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public RulesResponse executeRules(@RequestBody RulesRequestDetails request) {

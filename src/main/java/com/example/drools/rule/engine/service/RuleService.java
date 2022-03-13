@@ -1,7 +1,6 @@
 package com.example.drools.rule.engine.service;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,29 +39,14 @@ public class RuleService {
 
 	@Value("${rule.repo.name}")
 	private String repoName;
-
+		
 	private Git repository;
 	static String id;
 
-	public void createDirectory() throws IOException {
-		Files.createDirectories(Paths.get(rulesUploadPath));
-	}
-
 	public void fileExists() {
-		try {
-			Path path = Paths.get(rulesUploadPath);
-
-			if (!Files.exists(path)) {
-				createDirectory();
-			}
-
-			if (!Files.exists(Paths.get(rulesUploadPath + "/" + repoName))) {
-				cloneRepositry(path.toFile());
-			}
-
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-
+		Path path = Paths.get(rulesUploadPath);
+		if (!Files.exists(Paths.get(rulesUploadPath))) {
+			cloneRepositry(path.toFile());
 		}
 	}
 
@@ -114,7 +98,7 @@ public class RuleService {
 
 			if (result.isSuccessful()) {
 				logger.info("Pulling latest commit from repository : {}", result.getFetchResult());
-				log();
+				this.log();
 			}
 
 		} catch (GitAPIException e) {

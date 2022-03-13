@@ -7,22 +7,27 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
+import com.example.drools.rule.engine.delegate.RulesDelegate;
 import com.example.drools.rule.engine.service.RuleService;
 
 @Configuration
 @EnableScheduling
 public class Schedular {
-	
+
 	@Autowired
 	private RuleService service;
-	
+
+	@Autowired
+	private RulesDelegate delegate;
+
 	private static final Logger logger = LoggerFactory.getLogger(Schedular.class);
-	
+
 	@Scheduled(fixedDelay = 120000)
 	public void pullRequestSchedular() {
-		
+
 		logger.info("Starting scheduled task");
 		service.pull();
+		delegate.init();
 	}
 
 }
