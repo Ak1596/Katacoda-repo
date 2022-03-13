@@ -46,7 +46,7 @@ public class RulesDelegate {
 
 		KieServices ks = KieServices.Factory.get();
 		kfilesystem = ks.newKieFileSystem();
-		service.cloneRepositry();
+		service.fileExists();
 		build();
 		KieBuilder builder = ks.newKieBuilder(kfilesystem);
 		builder.buildAll();

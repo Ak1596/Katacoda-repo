@@ -17,6 +17,7 @@ import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.merge.MergeStrategy;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,30 +34,68 @@ public class RuleService {
 
 	@Value("${rules.clone.base.url}")
 	private String rulesUploadPath;
-	
+
 	@Value("${remote.repo.branch}")
 	private String remoteBranch;
+
+	@Value("${rule.repo.name}")
+	private String repoName;
 
 	private Git repository;
 	static String id;
 
-	public File createDirectory() throws IOException {
-		Path directory = Files.createDirectories(Paths.get(rulesUploadPath));
-		return directory.toFile();
+	public void createDirectory() throws IOException {
+		Files.createDirectories(Paths.get(rulesUploadPath));
 	}
 
-	public void cloneRepositry() {
+	public void fileExists() {
+		try {
+			Path path = Paths.get(rulesUploadPath);
+
+			if (!Files.exists(path)) {
+				createDirectory();
+			}
+
+			if (!Files.exists(Paths.get(rulesUploadPath + "/" + repoName))) {
+				cloneRepositry(path.toFile());
+			}
+
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+
+		}
+	}
+
+	public void cloneRepositry(File directory) {
 
 		logger.info("Entering Clone Repositry Method");
 
 		try {
-			repository = Git.cloneRepository().setURI(rulesRepoUrl).setDirectory(createDirectory()).call();
+			repository = Git.cloneRepository().setURI(rulesRepoUrl).setDirectory(directory).call();
 			logger.info("Cloning Repositry Sucessful");
 
-		} catch (GitAPIException | IOException e) {
+		} catch (GitAPIException e) {
 			logger.error("Error occured during cloning remote reposistory : {}", e.getMessage());
 		}
 
+	}
+
+	public void log() {
+
+		try {
+
+			LogCommand command = repository.log().setMaxCount(2);
+
+			Iterable<RevCommit> logs = command.call();
+
+			for (RevCommit revCommit : logs) {
+				id = revCommit.getName();
+				logger.info(getConventionalCommitMessage(revCommit));
+			}
+
+		} catch (GitAPIException e) {
+			logger.error("Error occured : {}", e.getMessage());
+		}
 	}
 
 	public void pull() {
@@ -65,39 +104,22 @@ public class RuleService {
 
 			logger.info("Entering git pull request method");
 
-			String commitId = "53dba7210fe27c1148db570bab59f41a5d843118";
-			System.out.println("Last commit id : " + commitId);
+			PullCommand pull = repository.pull()
+					.setRemote("origin")
+					.setRemoteBranchName(remoteBranch)
+					.setRebase(true)
+					.setStrategy(MergeStrategy.RESOLVE);
+			
+			PullResult result = pull.call();
 
-			LogCommand command = repository.log().setMaxCount(1);
-
-			Iterable<RevCommit> logs = command.call();
-
-			for (RevCommit revCommit : logs) {
-				id = revCommit.getName();
-				logger.info(getConventionalCommitMessage(revCommit));
-
-				if (id != null && !id.equals(commitId)) {
-					commitId = id.toString();
-
-					PullCommand pull = repository.pull().setRemote(remoteBranch).setRebase(true);
-					PullResult result = pull.call();
-
-					if (result.isSuccessful()) {
-						logger.info("Pulling latest commit from repository : {}", result.getFetchResult());
-					}
-
-				} else {
-					logger.info("No new commit present in repository : {}");
-				}
-
+			if (result.isSuccessful()) {
+				logger.info("Pulling latest commit from repository : {}", result.getFetchResult());
+				log();
 			}
 
 		} catch (GitAPIException e) {
-
-			logger.error("Error occured : {}", e.getMessage());
-
+			logger.error("Expection Occured : {}", e.getMessage());
 		}
-
 	}
 
 	private static String getConventionalCommitMessage(RevCommit commit) {
