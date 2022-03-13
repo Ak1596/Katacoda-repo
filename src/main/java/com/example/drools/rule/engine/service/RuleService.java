@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.LogCommand;
+import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -32,6 +33,9 @@ public class RuleService {
 
 	@Value("${rules.clone.base.url}")
 	private String rulesUploadPath;
+	
+	@Value("${remote.repo.branch}")
+	private String remoteBranch;
 
 	private Git repository;
 	static String id;
@@ -61,7 +65,7 @@ public class RuleService {
 
 			logger.info("Entering git pull request method");
 
-			String commitId = "67efbe511278b5816b38b30ec60bd24f0b03a17e";
+			String commitId = "53dba7210fe27c1148db570bab59f41a5d843118";
 			System.out.println("Last commit id : " + commitId);
 
 			LogCommand command = repository.log().setMaxCount(1);
@@ -75,7 +79,9 @@ public class RuleService {
 				if (id != null && !id.equals(commitId)) {
 					commitId = id.toString();
 
-					PullResult result = repository.pull().call();
+					PullCommand pull = repository.pull().setRemote(remoteBranch).setRebase(true);
+					PullResult result = pull.call();
+
 					if (result.isSuccessful()) {
 						logger.info("Pulling latest commit from repository : {}", result.getFetchResult());
 					}
