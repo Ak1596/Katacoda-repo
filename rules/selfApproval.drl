@@ -7,7 +7,7 @@ rule "self Approval Rule"
 dialect "mvel"
 
 when
-    request : RulesRequestDetails(empId in ("19629","2195244","1976352","S204","M1044588","S203"))
+    request : RulesRequestDetails(empId in ("19629","2195244","1976352","S204","M1044588"))
     response : RulesResponse()
 
 then
