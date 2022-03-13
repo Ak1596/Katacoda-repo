@@ -1,4 +1,4 @@
-package com.example.drools.rule.engine.util;
+package com.example.drools.rule.engine.validation;
 
 import org.springframework.stereotype.Component;
 

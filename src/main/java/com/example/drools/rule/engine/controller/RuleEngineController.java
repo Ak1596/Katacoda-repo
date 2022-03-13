@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.drools.rule.engine.delegate.RulesDelegate;
 import com.example.drools.rule.engine.model.RulesRequestDetails;
 import com.example.drools.rule.engine.model.RulesResponse;
-import com.example.drools.rule.engine.util.RequestValidator;
+import com.example.drools.rule.engine.validation.RequestValidator;
 
 @RestController
 @RequestMapping("/v1/rules")
