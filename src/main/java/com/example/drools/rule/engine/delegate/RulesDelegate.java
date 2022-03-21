@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.drools.rule.engine.model.RulesRequestDetails;
 import com.example.drools.rule.engine.model.RulesResponse;
-import com.example.drools.rule.engine.service.RuleService;
+import com.example.drools.rule.engine.util.RulesUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -36,7 +36,7 @@ public class RulesDelegate {
 	private String location;
 	
 	@Autowired
-	private RuleService service;
+	private RulesUtil util;
 
 	private KieBase kbase;
 	private KieFileSystem kfilesystem;
@@ -46,7 +46,7 @@ public class RulesDelegate {
 
 		KieServices ks = KieServices.Factory.get();
 		kfilesystem = ks.newKieFileSystem();
-		service.fileExists();
+		util.fileExists();
 		build();
 		KieBuilder builder = ks.newKieBuilder(kfilesystem);
 		builder.buildAll();

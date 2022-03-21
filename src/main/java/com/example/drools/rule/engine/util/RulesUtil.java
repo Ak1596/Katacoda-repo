@@ -1,4 +1,4 @@
-package com.example.drools.rule.engine.service;
+package com.example.drools.rule.engine.util;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -21,10 +21,10 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class RuleService {
+@Component
+public class RulesUtil {
 
 	private static final Logger logger = LoggerFactory.getLogger("RuleService");
 
@@ -37,9 +37,6 @@ public class RuleService {
 	@Value("${remote.repo.branch}")
 	private String remoteBranch;
 
-	@Value("${rule.repo.name}")
-	private String repoName;
-		
 	private Git repository;
 	static String id;
 
